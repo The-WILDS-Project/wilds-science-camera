@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wilds-science-camera"
+version = "0.1.0"
+description = "WILDS science camera control — Archon CCD controller facade"
+requires-python = ">=3.10"
+dependencies = [
+    "sdss-archon",
+    "numpy>=2.0",
+    "pydantic>=2.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wilds"]
+
+[tool.uv.sources]
+# sdss-archon lives next to this repo; adjust path if needed.
+sdss-archon = { path = "../../../WILDS/archon", editable = true }
+
+[tool.ruff]
+line-length = 99
