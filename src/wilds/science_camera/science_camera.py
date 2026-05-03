@@ -27,6 +27,39 @@ from pydantic import BaseModel, ConfigDict
 
 from archon.controller.controller import ArchonController
 from archon.controller.maskbits import ArchonPower, ControllerStatus
+from wilds.bridge.telescope import TelescopeStatus
+
+
+def _add_telescope_headers(header: fits.Header, ts: TelescopeStatus) -> None:
+    if ts.target_name:
+        header["OBJECT"] = (ts.target_name, "Target name")
+    if ts.airmass is not None:
+        header["AIRMASS"] = (ts.airmass, "Airmass at start of exposure")
+    if ts.par_angle is not None:
+        header["PARANG"] = (ts.par_angle, "[deg] Parallactic angle")
+    if ts.lst is not None:
+        header["LST"] = (ts.lst, "Local sidereal time")
+    if p := ts.pointing:
+        ra = p.currentRADec.ra
+        if ra.hours is not None:
+            ra_deg = (ra.hours + (ra.minutesTime or 0) / 60 + (ra.secondsTime or 0) / 3600) * 15
+            header["RA"] = (ra_deg, "[deg] Right ascension")
+        dec = p.currentRADec.declination
+        if dec.degreesDec is not None:
+            d = int(dec.degreesDec)
+            sign = -1 if dec.degreesDec.startswith("-") else 1
+            dec_deg = sign * (abs(d) + (dec.minutesArc or 0) / 60 + (dec.secondsArc or 0) / 3600)
+            header["DEC"] = (dec_deg, "[deg] Declination")
+        az = p.currentAzEl.azimuth
+        if az.degreesArc is not None:
+            az_deg = az.degreesArc + (az.minutesArc or 0) / 60 + (az.secondsArc or 0) / 3600
+            header["AZ"] = (az_deg, "[deg] Azimuth")
+        el = p.currentAzEl.elevation
+        if el.degreesAlt is not None:
+            el_deg = el.degreesAlt + (el.minutesArc or 0) / 60 + (el.secondsArc or 0) / 3600
+            header["EL"] = (el_deg, "[deg] Elevation")
+        if p.currentRotatorPositions and p.currentRotatorPositions.rotPA is not None:
+            header["ROTPA"] = (p.currentRotatorPositions.rotPA, "[deg] Rotator position angle")
 
 
 class Exposure(BaseModel):
@@ -146,7 +179,12 @@ class ScienceCamera:
     # I/O
     # ------------------------------------------------------------------
 
-    async def save_as_fits(self, frame: np.ndarray) -> pathlib.Path:
+    async def save_as_fits(
+        self,
+        frame: np.ndarray,
+        *,
+        telescope_status: TelescopeStatus | None = None,
+    ) -> pathlib.Path:
         """Write *frame* to ``<latest_exposure.folder>/<name>.fits``. Returns the path written."""
         if self.latest_exposure is None:
             raise RuntimeError("no exposure recorded; call expose() first")
@@ -160,6 +198,8 @@ class ScienceCamera:
                 header["CCD-TEMP"] = (float(raw), "[degC] CCD temperature at readout")
             except (ValueError, TypeError):
                 pass
+        if telescope_status is not None:
+            _add_telescope_headers(header, telescope_status)
         path = self.latest_exposure.folder / f"{self.name}.fits"
         fits.writeto(path, frame, header=header, overwrite=True)
         return path
