@@ -19,7 +19,7 @@ packages = ["src/wilds"]
 
 [tool.uv.sources]
 # sdss-archon lives next to this repo; adjust path if needed.
-sdss-archon = { path = "../../../WILDS/archon", editable = true }
+sdss-archon = { path = "../archon", editable = true }
 wilds-bridge = { path = "../wilds-bridge", editable = true }
 
 [tool.ruff]

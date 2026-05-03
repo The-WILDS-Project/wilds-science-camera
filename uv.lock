@@ -1134,7 +1134,7 @@ wheels = [
 [[package]]
 name = "sdss-archon"
 version = "0.15.6a1"
-source = { editable = "../../../WILDS/archon" }
+source = { editable = "../archon" }
 dependencies = [
     { name = "astropy", version = "6.1.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "astropy", version = "7.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -1328,7 +1328,7 @@ dependencies = [
 requires-dist = [
     { name = "numpy", specifier = ">=2.0" },
     { name = "pydantic", specifier = ">=2.0" },
-    { name = "sdss-archon", editable = "../../../WILDS/archon" },
+    { name = "sdss-archon", editable = "../archon" },
     { name = "wilds-bridge", editable = "../wilds-bridge" },
 ]
 
