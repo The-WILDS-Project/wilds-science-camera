@@ -1,5 +1,5 @@
 {
-  "venvPath": ".",
+  "venvPath": "..",
   "venv": ".venv",
   "extraPaths": ["../archon", "../wilds-bridge/src"]
 }
