@@ -24,3 +24,6 @@ wilds-bridge = { path = "../wilds-bridge", editable = true }
 
 [tool.ruff]
 line-length = 99
+
+[tool.ruff.lint.isort]
+known-first-party = ["wilds"]

@@ -22,11 +22,11 @@ import pathlib
 from datetime import datetime, timezone
 
 import numpy as np
+from archon.controller.controller import ArchonController
+from archon.controller.maskbits import ArchonPower, ControllerStatus
 from astropy.io import fits
 from pydantic import BaseModel, ConfigDict
 
-from archon.controller.controller import ArchonController
-from archon.controller.maskbits import ArchonPower, ControllerStatus
 from wilds.bridge.telescope import TelescopeStatus
 
 
