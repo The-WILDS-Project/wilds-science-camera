@@ -19,7 +19,7 @@ Usage::
 
 import os
 import pathlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import numpy as np
 from archon.controller.controller import ArchonController
@@ -152,7 +152,7 @@ class ScienceCamera:
         """Expose, read out, and return the frame as a numpy array."""
         self.latest_exposure = Exposure(
             exptime=exptime,
-            date_obs=datetime.now(timezone.utc),
+            date_obs=datetime.now(UTC),
             folder=pathlib.Path(folder),
         )
         task = await self._ctrl.expose(exptime, readout=True)

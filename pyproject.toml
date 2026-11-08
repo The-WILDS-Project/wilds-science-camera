@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "wilds-science-camera"
 version = "0.1.0"
 description = "WILDS science camera control — Archon CCD controller facade"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 dependencies = [
     "sdss-archon",
     "numpy>=2.0",
